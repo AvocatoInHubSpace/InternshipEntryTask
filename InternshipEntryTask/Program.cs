@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using InternshipEntryTask.Application.Settings;
 using InternshipEntryTask.Infrastructure.Data;
 using InternshipEntryTask.Presentation.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseExceptionHandler("/error-development");
+
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<GameDbContext>();
+    db.Database.Migrate();
 }
 else
 {

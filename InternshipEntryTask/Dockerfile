@@ -1,16 +1,14 @@
 ﻿FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-USER $APP_UID
+USER app
 WORKDIR /app
 EXPOSE 8080
-EXPOSE 8081
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["InternshipEntryTask/InternshipEntryTask.csproj", "InternshipEntryTask/"]
-RUN dotnet restore "InternshipEntryTask/InternshipEntryTask.csproj"
+WORKDIR /src/InternshipEntryTask
+COPY ["InternshipEntryTask.csproj", "."]
+RUN dotnet restore "InternshipEntryTask.csproj"
 COPY . .
-WORKDIR "/src/InternshipEntryTask"
 RUN dotnet build "./InternshipEntryTask.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish

@@ -1,7 +1,32 @@
-﻿services:
-  internshipentrytask:
-    image: internshipentrytask
+services:
+  app:
     build:
-      context: .
-      dockerfile: InternshipEntryTask/Dockerfile
+      context: InternshipEntryTask
+    ports:
+      - 8080:8080
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=TicTacToeGameDb;Username=postgres;Password=1111    
+  
+  db:
+    image: postgres
+    restart: always
+    volumes:
+     - pgdata:/var/lib/postgresql/data
+    environment:
+     - POSTGRES_DB=TicTacToeGameDb
+     - POSTGRES_USER=postgres
+     - POSTGRES_PASSWORD=1111
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
 
